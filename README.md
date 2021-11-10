@@ -1,3 +1,3 @@
 # SSL
-Encryption and decryption library based on boringssl
-基于boringssl实现的加解密库
+Encryption and decryption library based on google boringssl </br>
+基于google boringssl实现的加解密库
