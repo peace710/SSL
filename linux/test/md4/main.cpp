@@ -12,12 +12,12 @@ int main(int argc,char* argv[]){
     	MD4_Update(&md4,data,strlen(data));
     	MD4_Final(out,&md4);  
     	printf("hello world md4:\n");
-    	printHex((unsigned const char*)out,MD4_DIGEST_LENGTH);
+    	printHex((const unsigned char*)out,MD4_DIGEST_LENGTH);
     
     	uint8_t easyout[MD4_DIGEST_LENGTH];
     	MD4((const uint8_t*)data,strlen(data),easyout);
     	printf("hello world md4(easy):\n");
-    	printHex((unsigned const char*)easyout,MD4_DIGEST_LENGTH);
+    	printHex((const unsigned char*)easyout,MD4_DIGEST_LENGTH);
 
     	return 0;
 }

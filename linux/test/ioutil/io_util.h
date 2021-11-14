@@ -5,7 +5,9 @@
 extern "C" {
 #endif
 
-int printHex(unsigned const char* data,int len);
+int printHex(const unsigned char* data,int len);
+
+int printChar(const unsigned char* data,int len);
 
 #ifdef __cplusplus
 }

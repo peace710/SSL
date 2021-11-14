@@ -12,12 +12,12 @@ int main(int argc,char* argv[]){
     	MD5_Update(&md5,data,strlen(data));
     	MD5_Final(out,&md5);  
     	printf("hello world md5:\n");
-    	printHex((unsigned const char*)out,MD5_DIGEST_LENGTH);
+    	printHex((const unsigned char*)out,MD5_DIGEST_LENGTH);
     
     	uint8_t easyout[MD5_DIGEST_LENGTH];
     	MD5((const uint8_t*)data,strlen(data),easyout);
     	printf("hello world md5(easy):\n");
-    	printHex((unsigned const char*)easyout,MD5_DIGEST_LENGTH);
+    	printHex((const unsigned char*)easyout,MD5_DIGEST_LENGTH);
 
     	return 0;
 }
