@@ -3,7 +3,7 @@
 
 int printHex(const unsigned char* data,int len){
 	for (int i = 0 ; i < len ;i++){
-		printf("%X",data[i]);
+		printf("%02X",data[i]);
    	}
    	printf("\n");
    	return 0;
