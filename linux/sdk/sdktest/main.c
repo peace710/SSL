@@ -3,6 +3,7 @@
 #include <string.h>
 #include <hex.h>
 #include <ssl_sha.h>
+#include <ssl_md.h>
 
 void printHex(const unsigned char *data,int len){
 	for (int i = 0 ;i < len; i++){
@@ -80,9 +81,26 @@ void test_sha(){
 	cleanup(out);
 }
 
+void test_md(){
+	char data[] = "hello world";
+	int len = 0;
+        unsigned char *out = NULL;
+
+	len = md((const char*)data,&out,MD_4);
+	printf("MD4:");
+	printHex((const unsigned char*)out,len);
+	cleanup(out);
+	
+	len = md((const char*)data,&out,MD_5);
+	printf("MD5:");
+	printHex((const unsigned char*)out,len);
+	cleanup(out);
+}
+
 int main(int argc,char *argv[]){
 	test_hex();	
 	test_sha();
+	test_md();
 	return 0;	
 
 }
