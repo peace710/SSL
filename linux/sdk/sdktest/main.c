@@ -2,8 +2,30 @@
 #include <stdlib.h>
 #include <string.h>
 #include <hex.h>
+#include <ssl_sha.h>
 
-int main(int argc,char *argv[]){
+void printHex(const unsigned char *data,int len){
+	for (int i = 0 ;i < len; i++){
+		printf("%02X",data[i]);
+	}
+	printf("\n");
+}
+
+void printChar(const char *data,int len){
+	for (int i = 0;i < len;i++){
+		printf("%c",data[i]);
+	}
+	printf("\n");
+}
+
+void cleanup(void *ptr){
+	if (ptr != NULL){
+		free(ptr);
+		ptr = NULL;	
+	}
+}
+
+void test_hex(){
 	char p[] = "Desktop of War -> Call of Duty";
 
 	int len = strlen((const char*)p);
@@ -15,21 +37,52 @@ int main(int argc,char *argv[]){
 	int out_len = hex_decode((const unsigned char*)hex_out,(const int)hex_len,(unsigned char**)&out);
 
 
-	for (int i = 0 ; i < out_len ;i++){
-		printf("%c",out[i]);
-	}
+	printChar((const char*)out,out_len);
 
-	printf("\n");
+	cleanup(hex_out);
+	cleanup(out);
 
-	if (hex_out != NULL){
-		free(hex_out);
-		hex_out = NULL;
-	}
+}
+
+void test_sha(){
+	char data[] = "hello world";
+	int len = 0;
+        unsigned char *out = NULL;
+
+	len = sha((const char*)data,&out,SHA_1);
+	printf("SHA1:");
+	printHex((const unsigned char*)out,len);
+	cleanup(out);
 	
-	if (out != NULL){
-		free(out);
-		out = NULL;
-	}
+	len = sha((const char*)data,&out,SHA_224);
+	printf("SHA224:");
+	printHex((const unsigned char*)out,len);
+	cleanup(out);
+	
+	len = sha((const char*)data,&out,SHA_256);
+	printf("SHA256:");
+	printHex((const unsigned char*)out,len);
+	cleanup(out);
+	
+	len = sha((const char*)data,&out,SHA_384);
+	printf("SHA384:");
+	printHex((const unsigned char*)out,len);
+	cleanup(out);
+	
+	len = sha((const char*)data,&out,SHA_512);
+	printf("SHA512:");
+	printHex((const unsigned char*)out,len);
+	cleanup(out);
+	
+	len = sha((const char*)data,&out,SHA_512_256);
+	printf("SHA512_256:");
+	printHex((const unsigned char*)out,len);
+	cleanup(out);
+}
+
+int main(int argc,char *argv[]){
+	test_hex();	
+	test_sha();
 	return 0;	
 
 }

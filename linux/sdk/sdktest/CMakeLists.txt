@@ -4,16 +4,18 @@ project(sdktest)
 
 set(PARENT_DIR ${CMAKE_CURRENT_LIST_DIR}/../)
 
-Message("======>${PARENT_DIR}\n")
+set(SSL_LIB ${CMAKE_CURRENT_LIST_DIR}/../../)
 
-set(PROJECT_LINK_LIBS libutil.a)
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -pthread")
 
-link_directories(${PARENT_DIR}/util/lib)
+set(PROJECT_LINK_LIBS libutil.a libcrypto.a libssl.a)
 
-include_directories(${PARENT_DIR}/util/include)
+link_directories(${PARENT_DIR}/util/lib ${SSL_LIB}/static)
 
-add_executable(hextest main.c)
+include_directories(${PARENT_DIR}/util/include ${SSL_LIB}/include)
 
-target_link_libraries(hextest ${PROJECT_LINK_LIBS})
+add_executable(sdktest main.c)
+
+target_link_libraries(sdktest ${PROJECT_LINK_LIBS})
 
 
