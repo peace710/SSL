@@ -4,6 +4,7 @@
 #include <hex.h>
 #include <ssl_sha.h>
 #include <ssl_md.h>
+#include <ssl_hmac.h>
 
 void printHex(const unsigned char *data,int len){
 	for (int i = 0 ;i < len; i++){
@@ -97,10 +98,69 @@ void test_md(){
 	cleanup(out);
 }
 
+void test_hmac(){
+	char data[] = "hello world";
+	char key[] = "1234567890";
+
+	uint8_t *out = NULL;
+	unsigned int out_len;
+
+	hmac((const uint8_t*)data,key,&out,&out_len,HMAC_MD4);
+	printf("HMAC_MD4:\n");
+	printHex((const unsigned char*)out,out_len);
+	cleanup(out);
+
+	hmac((const uint8_t*)data,key,&out,&out_len,HMAC_MD5);
+	printf("HMAC_MD5:\n");
+	printHex((const unsigned char*)out,out_len);
+	cleanup(out);
+		
+	hmac((const uint8_t*)data,key,&out,&out_len,HMAC_SHA1);
+	printf("HMAC_SHA1:\n");
+	printHex((const unsigned char*)out,out_len);
+	cleanup(out);
+
+	hmac((const uint8_t*)data,key,&out,&out_len,HMAC_SHA224);
+	printf("HMAC_SHA224:\n");
+	printHex((const unsigned char*)out,out_len);
+	cleanup(out);
+
+	hmac((const uint8_t*)data,key,&out,&out_len,HMAC_SHA256);
+	printf("HMAC_SHA256:\n");
+	printHex((const unsigned char*)out,out_len);
+	cleanup(out);
+
+	hmac((const uint8_t*)data,key,&out,&out_len,HMAC_SHA384);
+	printf("HMAC_SHA384:\n");
+	printHex((const unsigned char*)out,out_len);
+	cleanup(out);
+
+	hmac((const uint8_t*)data,key,&out,&out_len,HMAC_SHA512);
+	printf("HMAC_SHA512:\n");
+	printHex((const unsigned char*)out,out_len);
+	cleanup(out);
+
+	hmac((const uint8_t*)data,key,&out,&out_len,HMAC_SHA512_256);
+	printf("HMAC_SHA512_256:\n");
+	printHex((const unsigned char*)out,out_len);
+	cleanup(out);
+
+	hmac((const uint8_t*)data,key,&out,&out_len,HMAC_BLAKE_2B_256);
+	printf("HMAC_SHA_BLAKE_2B_256:\n");
+	printHex((const unsigned char*)out,out_len);
+	cleanup(out);
+
+	hmac((const uint8_t*)data,key,&out,&out_len,HMAC_MD5_SHA1);
+	printf("HMAC_MD5_SHA1:\n");
+	printHex((const unsigned char*)out,out_len);
+	cleanup(out);
+}
+
 int main(int argc,char *argv[]){
 	test_hex();	
 	test_sha();
 	test_md();
+	test_hmac();
 	return 0;	
 
 }
