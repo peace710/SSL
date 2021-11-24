@@ -3,7 +3,7 @@
 #include <ssl_aes.h>
 
 
-const EVP_CIPHER *get_cipher(int mode){
+const EVP_CIPHER *get_aes_cipher(int mode){
 	switch (mode){
 		case EVP_aes_128_cbc:
 			return EVP_get_cipherbynid(NID_aes_128_cbc);
@@ -43,7 +43,7 @@ int aes_encrypt(const unsigned char *key,int data_len,const unsigned char *in,un
 		size = (size / AES_BLOCK_SIZE + 1) * AES_BLOCK_SIZE; 
 	}
 	
-	const EVP_CIPHER *cipher = get_cipher(mode);
+	const EVP_CIPHER *cipher = get_aes_cipher(mode);
 	if (cipher == NULL){
 		return 0;
 	}
@@ -72,7 +72,7 @@ int aes_decrypt(const unsigned char *key,int data_len,const unsigned char *in,un
 	int update_len = 0;
 	int final_len = 0;
 	
-        const EVP_CIPHER *cipher = get_cipher(mode);
+        const EVP_CIPHER *cipher = get_aes_cipher(mode);
 	if (cipher == NULL){
 		return 0;
 	}

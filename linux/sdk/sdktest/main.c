@@ -6,6 +6,7 @@
 #include <ssl_md.h>
 #include <ssl_hmac.h>
 #include <ssl_aes.h>
+#include <ssl_des.h>
 
 void printHex(const unsigned char *data,int len){
 	for (int i = 0 ;i < len; i++){
@@ -50,7 +51,7 @@ void test_hex(){
 void test_sha(){
 	char data[] = "hello world";
 	int len = 0;
-        unsigned char *out = NULL;
+	unsigned char *out = NULL;
 
 	len = sha((const char*)data,&out,SHA_1);
 	printf("SHA1:");
@@ -86,7 +87,7 @@ void test_sha(){
 void test_md(){
 	char data[] = "hello world";
 	int len = 0;
-        unsigned char *out = NULL;
+	unsigned char *out = NULL;
 
 	len = md((const char*)data,&out,MD_4);
 	printf("MD4:");
@@ -480,19 +481,147 @@ void test_aes_256_iv(){
 
 }
 
+void test_des(){
+	char key[] = "ABCDEFGH";
+	char key16[] = "ABCDEFGH69696969";
+	char key24[] = "12345678ABCDEFGH99996666";
+
+	char data[] = "AES最常见的有3种方案，分别是AES-128、AES-192和AES-256，它们的区别在于密钥长度不同，AES-128的密钥长度为16bytes（128bit / 8），后两者分别为24bytes和32bytes。密钥越长，安全强度越高，但伴随运算轮数的增加，带来的运算开销就会更大，所以用户应根据不同应用场合进行合理选择";
+	int data_len = strlen(data);
+
+	unsigned char *enc = NULL;
+	int enc_len = 0;
+
+	unsigned char *dec = NULL;
+	int dec_len = 0;
+
+	des_encrypt((const unsigned char*)key,data_len,(const unsigned char*)data,&enc,&enc_len,NULL,EVP_des_cbc);
+	printf("des_cbc:\n");
+	printHex((const unsigned char*)enc,enc_len);
+	des_decrypt((const unsigned char*)key,enc_len,(const unsigned char*)enc,&dec,&dec_len,NULL,EVP_des_cbc);
+	printChar((const unsigned char*)dec,dec_len);
+	cleanup(enc);
+	enc_len = 0;
+	cleanup(dec);
+	dec_len = 0;
+
+
+	des_encrypt((const unsigned char*)key,data_len,(const unsigned char*)data,&enc,&enc_len,NULL,EVP_des_ecb);
+	printf("des_ecb:\n");
+	printHex((const unsigned char*)enc,enc_len);
+	des_decrypt((const unsigned char*)key,enc_len,(const unsigned char*)enc,&dec,&dec_len,NULL,EVP_des_ecb);
+	printChar((const unsigned char*)dec,dec_len);
+	cleanup(enc);
+	enc_len = 0;
+	cleanup(dec);
+	dec_len = 0;
+
+
+	des_encrypt((const unsigned char*)key16,data_len,(const unsigned char*)data,&enc,&enc_len,NULL,EVP_des_ede_cbc);
+	printf("des_ede_cbc:\n");
+	printHex((const unsigned char*)enc,enc_len);
+	des_decrypt((const unsigned char*)key16,enc_len,(const unsigned char*)enc,&dec,&dec_len,NULL,EVP_des_ede_cbc);
+	printChar((const unsigned char*)dec,dec_len);
+	cleanup(enc);
+	enc_len = 0;
+	cleanup(dec);
+	dec_len = 0;
+
+
+	des_encrypt((const unsigned char*)key16,data_len,(const unsigned char*)data,&enc,&enc_len,NULL,EVP_des_ede_ecb);
+	printf("des_ede_ecb:\n");
+	printHex((const unsigned char*)enc,enc_len);
+	des_decrypt((const unsigned char*)key16,enc_len,(const unsigned char*)enc,&dec,&dec_len,NULL,EVP_des_ede_ecb);
+	printChar((const unsigned char*)dec,dec_len);
+	cleanup(enc);
+	enc_len = 0;
+	cleanup(dec);
+	dec_len = 0;
+
+
+	des_encrypt((const unsigned char*)key24,data_len,(const unsigned char*)data,&enc,&enc_len,NULL,EVP_des_ede3_cbc);
+	printf("des_ede3_cbc:\n");
+	printHex((const unsigned char*)enc,enc_len);
+	des_decrypt((const unsigned char*)key24,enc_len,(const unsigned char*)enc,&dec,&dec_len,NULL,EVP_des_ede3_cbc);
+	printChar((const unsigned char*)dec,dec_len);
+	cleanup(enc);
+	enc_len = 0;
+	cleanup(dec);
+	dec_len = 0;
+
+}
+
+void test_des_iv(){
+	char key[] = "ABCDEFGH";
+	char key16[] = "ABCDEFGH69696969";
+	char key24[] = "12345678ABCDEFGH99996666";
+
+	char data[] = "AES最常见的有3种方案，分别是AES-128、AES-192和AES-256，它们的区别在于密钥长度不同，AES-128的密钥长度为16bytes（128bit / 8），后两者分别为24bytes和32bytes。密钥越长，安全强度越高，但伴随运算轮数的增加，带来的运算开销就会更大，所以用户应根据不同应用场合进行合理选择";
+	int data_len = strlen(data);
+	
+	unsigned char *enc = NULL;
+	int enc_len = 0;
+
+	unsigned char *dec = NULL;
+	int dec_len = 0;
+
+	char cbc_enc_iv[] = "12345678";
+	char cbc_dec_iv[] = "12345678";
+	des_encrypt((const unsigned char*)key,data_len,(const unsigned char*)data,&enc,&enc_len,(const unsigned char *)cbc_enc_iv,EVP_des_cbc);
+	printf("des_cbc_iv:\n");
+	printHex((const unsigned char*)enc,enc_len);
+	des_decrypt((const unsigned char*)key,enc_len,(const unsigned char*)enc,&dec,&dec_len,(const unsigned char *)cbc_dec_iv,EVP_des_cbc);
+	printChar((const unsigned char*)dec,dec_len);
+	cleanup(enc);
+	enc_len = 0;
+	cleanup(dec);
+	dec_len = 0;
+
+
+	char ede_cbc_enc_iv[] = "12345678";
+	char ede_cbc_dec_iv[] = "12345678";
+	des_encrypt((const unsigned char*)key16,data_len,(const unsigned char*)data,&enc,&enc_len,(const unsigned char *)ede_cbc_enc_iv,EVP_des_ede_cbc);
+	printf("des_ede_cbc_iv:\n");
+	printHex((const unsigned char*)enc,enc_len);
+	des_decrypt((const unsigned char*)key16,enc_len,(const unsigned char*)enc,&dec,&dec_len,(const unsigned char *)ede_cbc_dec_iv,EVP_des_ede_cbc);
+	printChar((const unsigned char*)dec,dec_len);
+	cleanup(enc);
+	enc_len = 0;
+	cleanup(dec);
+	dec_len = 0;
+
+	char ede3_cbc_enc_iv[] = "12345678";
+	char ede3_cbc_dec_iv[] = "12345678";
+	des_encrypt((const unsigned char*)key24,data_len,(const unsigned char*)data,&enc,&enc_len,(const unsigned char *)ede3_cbc_enc_iv,EVP_des_ede3_cbc);
+	printf("des_ede3_cbc_iv:\n");
+	printHex((const unsigned char*)enc,enc_len);
+	des_decrypt((const unsigned char*)key24,enc_len,(const unsigned char*)enc,&dec,&dec_len,(const unsigned char *)ede3_cbc_dec_iv,EVP_des_ede3_cbc);
+	printChar((const unsigned char*)dec,dec_len);
+	cleanup(enc);
+	enc_len = 0;
+	cleanup(dec);
+	dec_len = 0;
+
+}
+
 int main(int argc,char *argv[]){
 //	test_hex();	
 //	test_sha();
 //	test_md();
 //	test_hmac();
-	test_aes_128();
-	test_aes_128_iv();
+//	test_aes_128();
+//	test_aes_128_iv();
 	
-	test_aes_192();
-	test_aes_192_iv();
+//	test_aes_192();
+//	test_aes_192_iv();
 	
-	test_aes_256();
-	test_aes_256_iv();
-	return 0;	
+//	test_aes_256();
+//	test_aes_256_iv();
+	
+	test_des();
+	test_des_iv();
+	
+	
+	return 0;
 
 }
