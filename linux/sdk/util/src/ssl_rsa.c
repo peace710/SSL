@@ -119,6 +119,57 @@ int rsa_pri_decrypt(RSA *rsa,unsigned char *in,int data_len,unsigned char **out,
 	return ret;
 }
 
+int get_hash_id(int hash_id){
+	switch (hash_id){
+		case HASH_ID_MD5:
+			return NID_md5;
+		case HASH_ID_SHA1:
+			return NID_sha1;
+		case HASH_ID_SHA224:
+			return NID_sha224;
+		case HASH_ID_SHA256:
+			return NID_sha256;
+		case HASH_ID_SHA384:
+			return NID_sha384;
+		case HASH_ID_SHA512:
+			return NID_sha512;
+		case HASH_ID_MD5_SHA1:
+			return NID_md5_sha1;
+		default:
+			return ERROR;
+	}
+}
+
+int rsa_sign_msg(int type,const unsigned char *in,unsigned int len,unsigned char **sign,unsigned int *sign_len,RSA *rsa){
+	int ret = 0;
+	if (rsa){
+		int hash_id = get_hash_id(type);
+		if (hash_id == ERROR){
+			return ret;
+		}
+		int size = RSA_size(rsa);
+		*sign = (unsigned char*)malloc(size + 1);
+		if (*sign){
+			memset(*sign,0x00,size + 1);
+			ret = RSA_sign(hash_id,in,len,*sign,sign_len,rsa);
+		}
+	}
+	return ret;
+}
+
+int rsa_verify_msg(int type,const unsigned char *in,unsigned int len,const unsigned char *verify,unsigned int verify_len,RSA *rsa){
+	int ret = 0;
+	if (rsa){
+		int hash_id = get_hash_id(type);
+		if (hash_id == ERROR){
+			return ret;
+		}
+		ret = RSA_verify(hash_id,in,len,verify,verify_len,rsa);
+	}
+	return ret;	
+	
+}
+
 void free_rsa(RSA *rsa){
 	if (rsa){
 		RSA_free(rsa);

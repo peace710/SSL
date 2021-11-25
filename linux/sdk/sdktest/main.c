@@ -8,6 +8,7 @@
 #include <ssl_aes.h>
 #include <ssl_des.h>
 #include <ssl_rsa.h>
+#include <openssl/err.h>
 
 void printHex(const unsigned char *data,int len){
 	for (int i = 0 ;i < len; i++){
@@ -704,6 +705,104 @@ void test_rsa_enc_dec_pkcs1(){
 	
 }
 
+void test_rsa_sign_verify(){
+	
+	unsigned int len = 0;
+	
+	RSA *rsa = rsa_bits(RSA_BITS_1024);
+	
+	unsigned char *sign = NULL;
+	unsigned int sign_len = 0;
+	int success = 0;
+	
+	
+	char data_md5[] = "ABCDEFGHABCDEFGH";
+	len = strlen(data_md5);
+	rsa_sign_msg(HASH_ID_MD5,(const unsigned char*)data_md5,len,&sign,&sign_len,rsa);
+	printf("rsa_sign_msg(HASH_ID_MD5)%d,%s:\n",sign_len,ERR_error_string(ERR_get_error(), NULL));
+	printHex((const unsigned char*)sign,sign_len);
+	success = rsa_verify_msg(HASH_ID_MD5,(const unsigned char*)data_md5,len,(const unsigned char*)sign,sign_len,rsa);
+	printf("rsa_verify_msg(HASH_ID_MD5) is success:%d\n",success);
+	cleanup(sign);
+	sign = 0;
+	success = 0;
+	
+	char data_sha1[] = "0123456789ABCDEF1234";
+	len = strlen(data_sha1);
+	rsa_sign_msg(HASH_ID_SHA1,(const unsigned char*)data_sha1,len,&sign,&sign_len,rsa);
+	printf("rsa_sign_msg(HASH_ID_SHA1)%d,%s:\n",sign_len,ERR_error_string(ERR_get_error(), NULL));
+	printHex((const unsigned char*)sign,sign_len);
+	success = rsa_verify_msg(HASH_ID_SHA1,(const unsigned char*)data_sha1,len,(const unsigned char*)sign,sign_len,rsa);
+	printf("rsa_verify_msg(HASH_ID_SHA1) is success:%d\n",success);
+	cleanup(sign);
+	sign = 0;
+	success = 0;
+
+	
+	char data_sha224[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZOK";
+	len = strlen(data_sha224);
+	rsa_sign_msg(HASH_ID_SHA224,(const unsigned char*)data_sha224,len,&sign,&sign_len,rsa);
+	printf("rsa_sign_msg(HASH_ID_SHA224)%d,%s:\n",sign_len,ERR_error_string(ERR_get_error(), NULL));
+	printHex((const unsigned char*)sign,sign_len);
+	success = rsa_verify_msg(HASH_ID_SHA224,(const unsigned char*)data_sha224,len,(const unsigned char*)sign,sign_len,rsa);
+	printf("rsa_verify_msg(HASH_ID_SHA224) is success:%d\n",success);
+	cleanup(sign);
+	sign = 0;
+	success = 0;	
+	
+	char data_sha256[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZOrange";
+	len = strlen(data_sha256);
+	rsa_sign_msg(HASH_ID_SHA256,(const unsigned char*)data_sha256,len,&sign,&sign_len,rsa);
+	printf("rsa_sign_msg(HASH_ID_SHA256)%d,%s:\n",sign_len,ERR_error_string(ERR_get_error(), NULL));
+	printHex((const unsigned char*)sign,sign_len);
+	success = rsa_verify_msg(HASH_ID_SHA256,(const unsigned char*)data_sha256,len,(const unsigned char*)sign,sign_len,rsa);
+	printf("rsa_verify_msg(HASH_ID_SHA256) is success:%d\n",success);
+	cleanup(sign);
+	sign = 0;
+	success = 0;
+	
+	char data_sha384[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUV";
+	len = strlen(data_sha384);
+	rsa_sign_msg(HASH_ID_SHA384,(const unsigned char*)data_sha384,len,&sign,&sign_len,rsa);
+	printf("rsa_sign_msg(HASH_ID_SHA384)%d,%s:\n",sign_len,ERR_error_string(ERR_get_error(), NULL));
+	printHex((const unsigned char*)sign,sign_len);
+	success = rsa_verify_msg(HASH_ID_SHA384,(const unsigned char*)data_sha384,len,(const unsigned char*)sign,sign_len,rsa);
+	printf("rsa_verify_msg(HASH_ID_SHA384) is success:%d\n",success);
+	cleanup(sign);
+	sign = 0;
+	success = 0;
+	
+	
+	char data_sha512[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKL";
+	len = strlen(data_sha512);
+	rsa_sign_msg(HASH_ID_SHA512,(const unsigned char*)data_sha512,len,&sign,&sign_len,rsa);
+	printf("rsa_sign_msg(HASH_ID_SHA512)%d,%s:\n",sign_len,ERR_error_string(ERR_get_error(), NULL));
+	printHex((const unsigned char*)sign,sign_len);
+	success = rsa_verify_msg(HASH_ID_SHA512,(const unsigned char*)data_sha512,len,(const unsigned char*)sign,sign_len,rsa);
+	printf("rsa_verify_msg(HASH_ID_SHA512) is success:%d\n",success);
+	cleanup(sign);
+	sign = 0;
+	success = 0;
+	
+
+	
+	char data_md5_sha1[] = "ABCDEFGHABCDEFGH0123456789ABCDEF1234";
+	len = strlen(data_md5_sha1);
+	rsa_sign_msg(HASH_ID_MD5_SHA1,(const unsigned char*)data_md5_sha1,len,&sign,&sign_len,rsa);
+	printf("rsa_sign_msg(HASH_ID_MD5_SHA1)%d,%s:\n",sign_len,ERR_error_string(ERR_get_error(), NULL));
+	printHex((const unsigned char*)sign,sign_len);
+	success = rsa_verify_msg(HASH_ID_MD5_SHA1,(const unsigned char*)data_md5_sha1,len,(const unsigned char*)sign,sign_len,rsa);
+	printf("rsa_verify_msg(HASH_ID_MD5_SHA1) is success:%d\n",success);
+	cleanup(sign);
+	sign = 0;
+	success = 0;
+	
+	
+	free_rsa(rsa);
+	
+}
+
+
 int main(int argc,char *argv[]){
 //	test_hex();	
 //	test_sha();
@@ -722,8 +821,9 @@ int main(int argc,char *argv[]){
 //	test_des_iv();
 	
 //	test_rsa_gen();
-	test_rsa_enc_dec_no_pad();
-	test_rsa_enc_dec_pkcs1();
+//	test_rsa_enc_dec_no_pad();
+//	test_rsa_enc_dec_pkcs1();
+	test_rsa_sign_verify();
 	return 0;
 
 }

@@ -17,6 +17,14 @@
 
 #define ERROR -1
 
+#define HASH_ID_MD5 1
+#define HASH_ID_SHA1 2
+#define HASH_ID_SHA224 3
+#define HASH_ID_SHA256 4
+#define HASH_ID_SHA384 5
+#define HASH_ID_SHA512 6
+#define HASH_ID_MD5_SHA1 7
+
 
 
 RSA *rsa_bits(int bits);
@@ -32,6 +40,10 @@ int rsa_pri_encrypt(RSA *rsa,unsigned char *in,int data_len,unsigned char **out,
 int rsa_pub_decrypt(RSA *rsa,unsigned char *in,int data_len,unsigned char **out,int padding);
 
 int rsa_pri_decrypt(RSA *rsa,unsigned char *in,int data_len,unsigned char **out,int padding);
+
+int rsa_sign_msg(int type,const unsigned char *in,unsigned int len,unsigned char **sign,unsigned int *sign_len,RSA *rsa);
+
+int rsa_verify_msg(int type,const unsigned char *in,unsigned int len,const unsigned char *verify,unsigned int verify_len,RSA *rsa);
 
 void free_rsa(RSA *rsa);
 
