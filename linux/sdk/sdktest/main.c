@@ -802,28 +802,63 @@ void test_rsa_sign_verify(){
 	
 }
 
-
+void test_rsa_get_read_pub_key(){
+	char modulus[] = "132786637117497282676450771703683839940848023258985053537474526562964302308143738562590162081795058288941050336872025009605124585724155203413046028979140768272461971411122547197547149397643757558197863704787830128185088608335626908277058094504636145797120939853198167649787677435802763602720937946003723737873";
+	
+	char exponent[] = "5033672606142824841681910767220646960542049648046767358624338571034140081889537215487967620152884598571614842465575737876889869732493829187776160462716523318447612072800356798660314149045185529963162765145055278227733741831346389826463414287512166355553618982432952098063518138168165264203994145982416737473";
+	
+	char data[] = "当你在客户端选择RSA_NO_PADDING填充模式,第一阶段完结";
+	
+	int data_len = strlen(data);
+	
+	RSA *rsa = NULL;
+	rsa = rsa_with_all((const char*)modulus,(const char*)exponent);
+	
+	char *key = NULL;
+	rsa_get_pub_key(rsa,&key);
+	
+	RSA *rsa_pub = NULL;
+	rsa_parse_pub_key(&rsa_pub,(const uint8_t*)key);
+	printf("message :%s\n",ERR_error_string(ERR_get_error(), NULL));
+	
+	unsigned char *pub_enc = NULL;
+	int pub_enc_len = rsa_pub_encrypt(rsa_pub,(unsigned char*)data,data_len,&pub_enc,PKCS1_PADDING);
+	printf("rsa_get_read_pub_key\n");
+	printf("rsa_pub_enc/pri_dec(PKCS1_PADDING):\n");
+	printHex((const unsigned char*)pub_enc,pub_enc_len);
+	unsigned char *pri_dec = NULL;
+	int pri_dec_len = rsa_pri_decrypt(rsa,(unsigned char*)pub_enc,pub_enc_len,&pri_dec,PKCS1_PADDING);
+	printChar((const unsigned char*)pri_dec,pri_dec_len);
+	cleanup(pub_enc);
+	cleanup(pri_dec);
+	
+	free(key);
+	free_rsa(rsa_pub);
+	free_rsa(rsa);
+}
 int main(int argc,char *argv[]){
-//	test_hex();	
-//	test_sha();
-//	test_md();
-//	test_hmac();
-//	test_aes_128();
-//	test_aes_128_iv();
-	
-//	test_aes_192();
-//	test_aes_192_iv();
-	
-//	test_aes_256();
-//	test_aes_256_iv();
-	
-//	test_des();
-//	test_des_iv();
-	
-//	test_rsa_gen();
-//	test_rsa_enc_dec_no_pad();
-//	test_rsa_enc_dec_pkcs1();
+	test_hex();	
+	test_sha();
+	test_md();
+	test_hmac();
+	test_aes_128();
+	test_aes_128_iv();
+      
+	test_aes_192();
+	test_aes_192_iv();
+      
+	test_aes_256();
+	test_aes_256_iv();
+      
+	test_des();
+	test_des_iv();
+      
+	test_rsa_gen();
+	test_rsa_enc_dec_no_pad();
+	test_rsa_enc_dec_pkcs1();
 	test_rsa_sign_verify();
+	test_rsa_get_read_pub_key();
+	
 	return 0;
 
 }

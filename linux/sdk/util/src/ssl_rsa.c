@@ -170,6 +170,39 @@ int rsa_verify_msg(int type,const unsigned char *in,unsigned int len,const unsig
 	
 }
 
+void rsa_get_pub_key(RSA *rsa,char **key){
+	uint8_t *pkey = NULL;
+	
+	int len = i2d_RSA_PUBKEY(rsa, &pkey);
+	if (pkey) {
+		size_t size = 0;
+		if (EVP_EncodedLength(&size, len)) {
+			*key= (char*)malloc(size + 1);
+			if (*key){
+				memset(*key,0x00,size + 1);
+				EVP_EncodeBlock(*key,(const unsigned char*)pkey,len);
+			}
+		}
+	}
+}
+
+void rsa_parse_pub_key(RSA **rsa,const uint8_t *pkey){
+	
+	if (*pkey){
+		int len = strlen((const char*)pkey);
+		size_t size = 0;
+		if (EVP_DecodedLength(&size, len)){
+			char *key= (char*)malloc(size + 1);
+			if (key){
+				memset(key,0x00,size + 1);
+				EVP_DecodeBlock(key,pkey,len);
+				d2i_RSA_PUBKEY(rsa,(const uint8_t **)&key,size);
+			}
+		}
+	}
+}
+
+
 void free_rsa(RSA *rsa){
 	if (rsa){
 		RSA_free(rsa);
