@@ -188,7 +188,7 @@ void rsa_get_pub_key(RSA *rsa,char **key){
 
 void rsa_parse_pub_key(RSA **rsa,const uint8_t *pkey){
 	
-	if (*pkey){
+	if (pkey){
 		int len = strlen((const char*)pkey);
 		size_t size = 0;
 		if (EVP_DecodedLength(&size, len)){

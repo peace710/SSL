@@ -8,6 +8,7 @@
 #include <ssl_aes.h>
 #include <ssl_des.h>
 #include <ssl_rsa.h>
+#include <ssl_base_64.h>
 #include <openssl/err.h>
 
 void printHex(const unsigned char *data,int len){
@@ -836,6 +837,24 @@ void test_rsa_get_read_pub_key(){
 	free_rsa(rsa_pub);
 	free_rsa(rsa);
 }
+
+void test_base64(){
+	char data[] = "有线网络";
+
+	unsigned char *encode = NULL;
+	int encode_len = base64_encode((const char*)data,&encode);
+	printf("base64 encode:\n");
+	printChar((const unsigned char*)encode,encode_len);
+
+	unsigned char *decode = NULL;
+	int decode_len = base64_decode((const char*)encode,&decode);
+	printf("base64 decode:\n");
+	printChar((const unsigned char*)decode,decode_len);	
+
+	cleanup(encode);
+	cleanup(decode);
+}
+
 int main(int argc,char *argv[]){
 	test_hex();	
 	test_sha();
@@ -859,6 +878,8 @@ int main(int argc,char *argv[]){
 	test_rsa_sign_verify();
 	test_rsa_get_read_pub_key();
 	
+	test_base64();
+
 	return 0;
 
 }
